@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableMethodSecurity
 public class RecommendationServiceApplication {
 
+    // Deploy
     public static void main(String[] args) {
         SpringApplication.run(RecommendationServiceApplication.class, args);
     }
