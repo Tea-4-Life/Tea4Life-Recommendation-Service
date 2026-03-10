@@ -13,19 +13,17 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import tea4life.recommendation_service.model.base.BaseEntity;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
-@Document(collection = "trending_stats")
+@Document(collection = "product_popularity")
 @CompoundIndexes({
-        @CompoundIndex(name = "uk_trending_stats_product_date", def = "{'product_id': 1, 'stat_date': 1}", unique = true),
-        @CompoundIndex(name = "idx_trending_stats_date_score", def = "{'stat_date': 1, 'total_score': -1}"),
-        @CompoundIndex(name = "idx_trending_stats_product_date", def = "{'product_id': 1, 'stat_date': 1}")
+        @CompoundIndex(name = "uk_product_popularity_product", def = "{'product_id': 1}", unique = true),
+        @CompoundIndex(name = "idx_product_popularity_score", def = "{'total_score': -1, 'last_updated': -1}")
 })
 @Getter
 @Setter
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TrendingStat extends BaseEntity {
+public class ProductPopularity extends BaseEntity {
 
     @Id
     String id;
@@ -33,11 +31,11 @@ public class TrendingStat extends BaseEntity {
     @Field("product_id")
     Long productId;
 
-    @Field("stat_date")
-    LocalDate statDate;
-
     @Field("view_count")
     Long viewCount = 0L;
+
+    @Field("click_count")
+    Long clickCount = 0L;
 
     @Field("order_count")
     Long orderCount = 0L;
