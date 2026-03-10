@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import tea4life.recommendation_service.dto.event.OrderPlacedEvent;
 import tea4life.recommendation_service.dto.event.OrderPlacedItemEvent;
 import tea4life.recommendation_service.dto.event.ProductClickedEvent;
-import tea4life.recommendation_service.dto.event.ProductViewedEvent;
 import tea4life.recommendation_service.model.ProductAssociation;
 import tea4life.recommendation_service.model.ProductPopularity;
 import tea4life.recommendation_service.model.constant.RecommendationAssociationType;
@@ -33,9 +32,6 @@ public class RecommendationStatsServiceImpl implements RecommendationStatsServic
     final ProductPopularityRepository productPopularityRepository;
     final MongoTemplate mongoTemplate;
 
-    @Value("${recommendation.score.view-weight:1.0}")
-    double viewWeight;
-
     @Value("${recommendation.score.click-weight:2.0}")
     double clickWeight;
 
@@ -50,20 +46,6 @@ public class RecommendationStatsServiceImpl implements RecommendationStatsServic
 
     @Value("${recommendation.popularity.decay-factor:0.5}")
     double popularityDecayFactor;
-
-    @Override
-    public void handleProductViewed(ProductViewedEvent event) {
-        if (event == null || event.productId() == null)
-            return;
-
-        upsertProductPopularity(
-                event.productId(),
-                1L,
-                0L,
-                0L,
-                viewWeight
-        );
-    }
 
     @Override
     public void handleProductClicked(ProductClickedEvent event) {
