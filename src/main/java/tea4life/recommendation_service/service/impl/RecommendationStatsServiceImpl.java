@@ -29,15 +29,24 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RecommendationStatsServiceImpl implements RecommendationStatsService {
 
-    static final double VIEW_WEIGHT = 1.0;
-    static final double CLICK_WEIGHT = 2.0;
-    static final double ORDER_WEIGHT = 10.0;
-    static final double PRODUCT_ASSOCIATION_WEIGHT = 5.0;
-    static final double OPTION_VALUE_ASSOCIATION_WEIGHT = 3.0;
-
     final ProductAssociationRepository productAssociationRepository;
     final ProductPopularityRepository productPopularityRepository;
     final MongoTemplate mongoTemplate;
+
+    @Value("${recommendation.score.view-weight:1.0}")
+    double viewWeight;
+
+    @Value("${recommendation.score.click-weight:2.0}")
+    double clickWeight;
+
+    @Value("${recommendation.score.order-weight:10.0}")
+    double orderWeight;
+
+    @Value("${recommendation.score.product-association-weight:5.0}")
+    double productAssociationWeight;
+
+    @Value("${recommendation.score.option-value-association-weight:3.0}")
+    double optionValueAssociationWeight;
 
     @Value("${recommendation.popularity.decay-factor:0.5}")
     double popularityDecayFactor;
@@ -47,40 +56,55 @@ public class RecommendationStatsServiceImpl implements RecommendationStatsServic
         if (event == null || event.productId() == null) {
             return;
         }
-        upsertProductPopularity(event.productId(), 1L, 0L, 0L, VIEW_WEIGHT);
+        upsertProductPopularity(
+                event.productId(),
+                1L,
+                0L,
+                0L,
+                viewWeight
+        );
     }
 
     @Override
     public void handleProductClicked(ProductClickedEvent event) {
-        if (event == null || event.productId() == null) {
+
+        if (event == null || event.productId() == null)
             return;
-        }
-        upsertProductPopularity(event.productId(), 0L, 1L, 0L, CLICK_WEIGHT);
+
+        upsertProductPopularity(
+                event.productId(),
+                0L,
+                1L,
+                0L,
+                clickWeight
+        );
+
     }
 
     @Override
     public void handleOrderPlaced(OrderPlacedEvent event) {
-        if (event == null || event.items() == null || event.items().isEmpty()) {
+
+        if (event == null || event.items() == null || event.items().isEmpty())
             return;
-        }
 
         List<OrderPlacedItemEvent> items = event.items().stream()
                 .filter(this::isValidItem)
                 .toList();
 
-        if (items.isEmpty()) {
+        if (items.isEmpty())
             return;
-        }
 
         for (OrderPlacedItemEvent item : items) {
             int quantity = quantityOrDefault(item);
+
             upsertProductPopularity(
                     item.productId(),
                     0L,
                     0L,
                     (long) quantity,
-                    quantity * ORDER_WEIGHT
+                    quantity * orderWeight
             );
+
             upsertOptionValueAssociations(item.productId(), item.optionValueIds(), quantity);
         }
 
@@ -132,38 +156,45 @@ public class RecommendationStatsServiceImpl implements RecommendationStatsServic
 
     private void upsertOptionValueAssociations(Long productId, List<Long> optionValueIds, int quantity) {
         for (Long optionValueId : safeList(optionValueIds)) {
-            if (optionValueId == null) {
+
+            if (optionValueId == null)
                 continue;
-            }
+
             upsertAssociation(
                     productId,
                     optionValueId,
                     RecommendationAssociationType.OPTION_VALUE,
-                    quantity * OPTION_VALUE_ASSOCIATION_WEIGHT
+                    quantity * optionValueAssociationWeight
             );
+            
         }
     }
 
     private void upsertProductAssociations(List<OrderPlacedItemEvent> items) {
         for (int i = 0; i < items.size(); i++) {
             for (int j = 0; j < items.size(); j++) {
-                if (i == j) {
-                    continue;
-                }
+
+                if (i == j) continue;
+
                 Long sourceProductId = items.get(i).productId();
                 Long associatedProductId = items.get(j).productId();
-                if (sourceProductId == null || associatedProductId == null || sourceProductId.equals(associatedProductId)) {
-                    continue;
-                }
 
-                double increment = Math.max(quantityOrDefault(items.get(i)), quantityOrDefault(items.get(j)))
-                        * PRODUCT_ASSOCIATION_WEIGHT;
+                if (sourceProductId == null
+                        || associatedProductId == null
+                        || sourceProductId.equals(associatedProductId)
+                ) continue;
+
+
+                double increment =
+                        Math.max(quantityOrDefault(items.get(i)), quantityOrDefault(items.get(j))) * productAssociationWeight;
+
                 upsertAssociation(
                         sourceProductId,
                         associatedProductId,
                         RecommendationAssociationType.PRODUCT,
                         increment
                 );
+
             }
         }
     }
