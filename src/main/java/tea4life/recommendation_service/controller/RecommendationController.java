@@ -37,7 +37,7 @@ public class RecommendationController {
     }
 
     @GetMapping("/popularity")
-    public ApiResponse<List<PopularProductResponse>> getProductPopularities(
+    public ApiResponse<List<PopularProductResponse>> getProductPopularises(
             @RequestParam("productIds") List<Long> productIds
     ) {
         return new ApiResponse<>(recommendationQueryService.getProductPopularities(productIds));
