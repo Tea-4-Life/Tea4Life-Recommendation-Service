@@ -1,38 +1,30 @@
 package tea4life.recommendation_service.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import tea4life.recommendation_service.config.database.SnowflakeGenerated;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import tea4life.recommendation_service.model.base.BaseEntity;
 import tea4life.recommendation_service.model.constant.RecommendationAssociationType;
 
 import java.time.Instant;
 
-@Entity
-@Table(
-        name = "product_associations",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_product_association_triplet",
-                        columnNames = {"product_id", "associated_target_id", "association_type"}
-                )
-        },
-        indexes = {
-                @Index(name = "idx_product_association_lookup", columnList = "product_id, association_type, correlation_score"),
-                @Index(name = "idx_product_association_target", columnList = "associated_target_id, association_type")
-        }
-)
+@Document(collection = "product_associations")
+@CompoundIndexes({
+        @CompoundIndex(
+                name = "uk_product_association_triplet",
+                def = "{'product_id': 1, 'associated_target_id': 1, 'association_type': 1}",
+                unique = true
+        ),
+        @CompoundIndex(name = "idx_product_association_lookup", def = "{'product_id': 1, 'association_type': 1, 'correlation_score': -1}"),
+        @CompoundIndex(name = "idx_product_association_target", def = "{'associated_target_id': 1, 'association_type': 1}")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,22 +32,20 @@ import java.time.Instant;
 public class ProductAssociation extends BaseEntity {
 
     @Id
-    @SnowflakeGenerated
-    Long id;
+    String id;
 
-    @Column(name = "product_id", nullable = false)
+    @Field("product_id")
     Long productId;
 
-    @Column(name = "associated_target_id", nullable = false)
+    @Field("associated_target_id")
     Long associatedTargetId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "association_type", nullable = false, length = 32)
+    @Field("association_type")
     RecommendationAssociationType associationType;
 
-    @Column(name = "correlation_score", nullable = false)
+    @Field("correlation_score")
     Double correlationScore = 0.0;
 
-    @Column(name = "last_updated", nullable = false)
+    @Field("last_updated")
     Instant lastUpdated = Instant.now();
 }

@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import tea4life.recommendation_service.dto.event.OrderPlacedEvent;
 import tea4life.recommendation_service.dto.event.OrderPlacedItemEvent;
 import tea4life.recommendation_service.model.ProductAssociation;
@@ -24,7 +23,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Transactional
 public class RecommendationStatsServiceImpl implements RecommendationStatsService {
 
     static final double ORDER_PREFERENCE_WEIGHT = 10.0;

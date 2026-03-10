@@ -1,32 +1,25 @@
 package tea4life.recommendation_service.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import tea4life.recommendation_service.config.database.SnowflakeGenerated;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import tea4life.recommendation_service.model.base.BaseEntity;
 
 import java.time.Instant;
 
-@Entity
-@Table(
-        name = "user_preferences",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_user_preference_user_category", columnNames = {"user_id", "category_id"})
-        },
-        indexes = {
-                @Index(name = "idx_user_preference_user_score", columnList = "user_id, preference_score"),
-                @Index(name = "idx_user_preference_category", columnList = "category_id")
-        }
-)
+@Document(collection = "user_preferences")
+@CompoundIndexes({
+        @CompoundIndex(name = "uk_user_preference_user_category", def = "{'user_id': 1, 'category_id': 1}", unique = true),
+        @CompoundIndex(name = "idx_user_preference_user_score", def = "{'user_id': 1, 'preference_score': -1}"),
+        @CompoundIndex(name = "idx_user_preference_category", def = "{'category_id': 1}")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,18 +27,17 @@ import java.time.Instant;
 public class UserPreference extends BaseEntity {
 
     @Id
-    @SnowflakeGenerated
-    Long id;
+    String id;
 
-    @Column(name = "user_id", nullable = false)
+    @Field("user_id")
     Long userId;
 
-    @Column(name = "category_id", nullable = false)
+    @Field("category_id")
     Long categoryId;
 
-    @Column(name = "preference_score", nullable = false)
+    @Field("preference_score")
     Double preferenceScore = 0.0;
 
-    @Column(name = "last_updated", nullable = false)
+    @Field("last_updated")
     Instant lastUpdated = Instant.now();
 }

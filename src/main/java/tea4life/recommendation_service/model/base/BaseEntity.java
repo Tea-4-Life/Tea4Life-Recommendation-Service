@@ -1,44 +1,37 @@
 package tea4life.recommendation_service.model.base;
 
-import java.time.Instant;
-
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.Instant;
 
-@EntityListeners(AuditingEntityListener.class)
-@MappedSuperclass
 @Getter
 @Setter
 @NoArgsConstructor
 public class BaseEntity {
 
     @CreatedDate
-    @Column(name = "created_at", updatable = false)
+    @Field("created_at")
     private Instant createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
+    @Field("updated_at")
     private Instant updatedAt;
 
     @CreatedBy
-    @Column(name = "created_by", updatable = false)
+    @Field("created_by")
     private String createdBy;
 
     @LastModifiedBy
-    @Column(name = "updated_by")
+    @Field("updated_by")
     private String updatedBy;
 
-    @Column(name = "active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    @Field("active")
     private Boolean active = true;
-
 }

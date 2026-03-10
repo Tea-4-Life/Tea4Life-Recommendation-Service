@@ -1,33 +1,26 @@
 package tea4life.recommendation_service.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import tea4life.recommendation_service.config.database.SnowflakeGenerated;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import tea4life.recommendation_service.model.base.BaseEntity;
 
 import java.time.Instant;
 import java.time.LocalDate;
 
-@Entity
-@Table(
-        name = "trending_stats",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_trending_stats_product_date", columnNames = {"product_id", "stat_date"})
-        },
-        indexes = {
-                @Index(name = "idx_trending_stats_date_score", columnList = "stat_date, total_score"),
-                @Index(name = "idx_trending_stats_product_date", columnList = "product_id, stat_date")
-        }
-)
+@Document(collection = "trending_stats")
+@CompoundIndexes({
+        @CompoundIndex(name = "uk_trending_stats_product_date", def = "{'product_id': 1, 'stat_date': 1}", unique = true),
+        @CompoundIndex(name = "idx_trending_stats_date_score", def = "{'stat_date': 1, 'total_score': -1}"),
+        @CompoundIndex(name = "idx_trending_stats_product_date", def = "{'product_id': 1, 'stat_date': 1}")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,24 +28,23 @@ import java.time.LocalDate;
 public class TrendingStat extends BaseEntity {
 
     @Id
-    @SnowflakeGenerated
-    Long id;
+    String id;
 
-    @Column(name = "product_id", nullable = false)
+    @Field("product_id")
     Long productId;
 
-    @Column(name = "stat_date", nullable = false)
+    @Field("stat_date")
     LocalDate statDate;
 
-    @Column(name = "view_count", nullable = false)
+    @Field("view_count")
     Long viewCount = 0L;
 
-    @Column(name = "order_count", nullable = false)
+    @Field("order_count")
     Long orderCount = 0L;
 
-    @Column(name = "total_score", nullable = false)
+    @Field("total_score")
     Double totalScore = 0.0;
 
-    @Column(name = "last_updated", nullable = false)
+    @Field("last_updated")
     Instant lastUpdated = Instant.now();
 }
