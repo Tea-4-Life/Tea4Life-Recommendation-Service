@@ -33,6 +33,32 @@ public class RecommendationQueryServiceImpl implements RecommendationQueryServic
     }
 
     @Override
+    public PopularProductResponse getProductPopularity(Long productId) {
+        return productPopularityRepository.findByProductId(productId)
+                .map(this::toPopularResponse)
+                .orElseGet(() -> new PopularProductResponse(
+                        productId,
+                        0L,
+                        0L,
+                        0L,
+                        0.0,
+                        null
+                ));
+    }
+
+    @Override
+    public List<PopularProductResponse> getProductPopularities(List<Long> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return List.of();
+        }
+
+        return productPopularityRepository.findByProductIdIn(productIds)
+                .stream()
+                .map(this::toPopularResponse)
+                .toList();
+    }
+
+    @Override
     public List<RelatedProductResponse> getRelatedProducts(Long productId) {
         return productAssociationRepository
                 .findTop20ByProductIdAndAssociationTypeOrderByCorrelationScoreDescLastUpdatedDesc(

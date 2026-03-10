@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tea4life.recommendation_service.dto.base.ApiResponse;
@@ -16,7 +17,7 @@ import tea4life.recommendation_service.service.RecommendationQueryService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/public/recommendations")
+@RequestMapping("/internal/recommendations")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RecommendationController {
@@ -26,6 +27,20 @@ public class RecommendationController {
     @GetMapping("/popular")
     public ApiResponse<List<PopularProductResponse>> getPopularProducts() {
         return new ApiResponse<>(recommendationQueryService.getPopularProducts());
+    }
+
+    @GetMapping("/products/{productId}/popularity")
+    public ApiResponse<PopularProductResponse> getProductPopularity(
+            @PathVariable("productId") Long productId
+    ) {
+        return new ApiResponse<>(recommendationQueryService.getProductPopularity(productId));
+    }
+
+    @GetMapping("/popularity")
+    public ApiResponse<List<PopularProductResponse>> getProductPopularities(
+            @RequestParam("productIds") List<Long> productIds
+    ) {
+        return new ApiResponse<>(recommendationQueryService.getProductPopularities(productIds));
     }
 
     @GetMapping("/products/{productId}/related")

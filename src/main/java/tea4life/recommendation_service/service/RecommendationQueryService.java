@@ -9,6 +9,10 @@ import java.util.List;
 public interface RecommendationQueryService {
     List<PopularProductResponse> getPopularProducts();
 
+    PopularProductResponse getProductPopularity(Long productId);
+
+    List<PopularProductResponse> getProductPopularities(List<Long> productIds);
+
     List<RelatedProductResponse> getRelatedProducts(Long productId);
 
     List<RecommendedOptionValueResponse> getRecommendedOptionValues(Long productId);

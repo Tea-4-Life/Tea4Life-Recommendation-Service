@@ -53,9 +53,9 @@ public class RecommendationStatsServiceImpl implements RecommendationStatsServic
 
     @Override
     public void handleProductViewed(ProductViewedEvent event) {
-        if (event == null || event.productId() == null) {
+        if (event == null || event.productId() == null)
             return;
-        }
+
         upsertProductPopularity(
                 event.productId(),
                 1L,
@@ -166,7 +166,7 @@ public class RecommendationStatsServiceImpl implements RecommendationStatsServic
                     RecommendationAssociationType.OPTION_VALUE,
                     quantity * optionValueAssociationWeight
             );
-            
+
         }
     }
 
