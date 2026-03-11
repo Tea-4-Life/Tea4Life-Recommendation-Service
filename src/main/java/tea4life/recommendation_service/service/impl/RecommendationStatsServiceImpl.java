@@ -122,10 +122,6 @@ public class RecommendationStatsServiceImpl implements RecommendationStatsServic
         Query query = Query.query(Criteria.where("product_id").is(productId));
         Update update = new Update()
                 .setOnInsert("product_id", productId)
-                .setOnInsert("view_count", 0L)
-                .setOnInsert("click_count", 0L)
-                .setOnInsert("order_count", 0L)
-                .setOnInsert("total_score", 0.0)
                 .setOnInsert("active", true)
                 .inc("view_count", viewIncrement)
                 .inc("click_count", clickIncrement)
@@ -197,7 +193,6 @@ public class RecommendationStatsServiceImpl implements RecommendationStatsServic
                 .setOnInsert("product_id", productId)
                 .setOnInsert("associated_target_id", associatedTargetId)
                 .setOnInsert("association_type", associationType)
-                .setOnInsert("correlation_score", 0.0)
                 .setOnInsert("active", true)
                 .inc("correlation_score", increment)
                 .set("last_updated", Instant.now());
