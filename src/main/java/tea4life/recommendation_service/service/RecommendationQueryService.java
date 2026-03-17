@@ -7,7 +7,7 @@ import tea4life.recommendation_service.dto.response.RelatedProductResponse;
 import java.util.List;
 
 public interface RecommendationQueryService {
-    List<PopularProductResponse> getPopularProducts();
+    List<PopularProductResponse> getPopularProducts(int limit);
 
     PopularProductResponse getProductPopularity(Long productId);
 

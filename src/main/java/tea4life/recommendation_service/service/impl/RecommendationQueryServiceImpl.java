@@ -3,6 +3,7 @@ package tea4life.recommendation_service.service.impl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tea4life.recommendation_service.dto.response.PopularProductResponse;
 import tea4life.recommendation_service.dto.response.RecommendedOptionValueResponse;
@@ -25,9 +26,12 @@ public class RecommendationQueryServiceImpl implements RecommendationQueryServic
     ProductAssociationRepository productAssociationRepository;
 
     @Override
-    public List<PopularProductResponse> getPopularProducts() {
-        return productPopularityRepository.findTop10ByOrderByTotalScoreDescLastUpdatedDesc()
+    public List<PopularProductResponse> getPopularProducts(int limit) {
+        int safeLimit = Math.max(1, Math.min(limit, 50));
+        return productPopularityRepository
+                .findAll(Sort.by(Sort.Order.desc("totalScore"), Sort.Order.desc("lastUpdated")))
                 .stream()
+                .limit(safeLimit)
                 .map(this::toPopularResponse)
                 .toList();
     }

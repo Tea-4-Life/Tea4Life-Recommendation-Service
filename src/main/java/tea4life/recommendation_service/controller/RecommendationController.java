@@ -25,8 +25,10 @@ public class RecommendationController {
     RecommendationQueryService recommendationQueryService;
 
     @GetMapping("/popular")
-    public ApiResponse<List<PopularProductResponse>> getPopularProducts() {
-        return new ApiResponse<>(recommendationQueryService.getPopularProducts());
+    public ApiResponse<List<PopularProductResponse>> getPopularProducts(
+            @RequestParam(name = "limit", defaultValue = "10") int limit
+    ) {
+        return new ApiResponse<>(recommendationQueryService.getPopularProducts(limit));
     }
 
     @GetMapping("/products/{productId}/popularity")
