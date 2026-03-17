@@ -25,6 +25,12 @@ public class RecommendationQueryServiceImpl implements RecommendationQueryServic
     ProductPopularityRepository productPopularityRepository;
     ProductAssociationRepository productAssociationRepository;
 
+    /**
+     * ========================================================
+     * Độ nổi tiếng sản phẩm
+     * ========================================================
+     */
+
     @Override
     public List<PopularProductResponse> getPopularProducts(int limit) {
         int safeLimit = Math.max(1, Math.min(limit, 50));
@@ -62,6 +68,12 @@ public class RecommendationQueryServiceImpl implements RecommendationQueryServic
                 .toList();
     }
 
+    /**
+     * ========================================================
+     * Gợi ý theo sản phẩm hiện tại
+     * ========================================================
+     */
+
     @Override
     public List<RelatedProductResponse> getRelatedProducts(Long productId) {
         return productAssociationRepository
@@ -85,6 +97,12 @@ public class RecommendationQueryServiceImpl implements RecommendationQueryServic
                 .map(this::toOptionValueResponse)
                 .toList();
     }
+
+    /**
+     * ========================================================
+     * Hàm Phụ
+     * ========================================================
+     */
 
     private PopularProductResponse toPopularResponse(ProductPopularity popularity) {
         return new PopularProductResponse(

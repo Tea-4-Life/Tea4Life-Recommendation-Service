@@ -24,6 +24,12 @@ public class RecommendationController {
 
     RecommendationQueryService recommendationQueryService;
 
+    /**
+     * ========================================================
+     * Độ nổi tiếng sản phẩm
+     * ========================================================
+     */
+
     @GetMapping("/popular")
     public ApiResponse<List<PopularProductResponse>> getPopularProducts(
             @RequestParam(name = "limit", defaultValue = "10") int limit
@@ -44,6 +50,12 @@ public class RecommendationController {
     ) {
         return new ApiResponse<>(recommendationQueryService.getProductPopularities(productIds));
     }
+
+    /**
+     * ========================================================
+     * Gợi ý theo sản phẩm hiện tại
+     * ========================================================
+     */
 
     @GetMapping("/products/{productId}/related")
     public ApiResponse<List<RelatedProductResponse>> getRelatedProducts(
