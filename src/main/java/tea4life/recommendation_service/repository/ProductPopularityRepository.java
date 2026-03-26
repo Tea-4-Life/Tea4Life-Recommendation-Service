@@ -10,8 +10,4 @@ public interface ProductPopularityRepository extends MongoRepository<ProductPopu
     Optional<ProductPopularity> findByProductId(Long productId);
 
     List<ProductPopularity> findByProductIdIn(List<Long> productIds);
-
-    List<ProductPopularity> findTop20ByOrderByTotalScoreDescLastUpdatedDesc();
-
-    List<ProductPopularity> findTop10ByOrderByTotalScoreDescLastUpdatedDesc();
 }

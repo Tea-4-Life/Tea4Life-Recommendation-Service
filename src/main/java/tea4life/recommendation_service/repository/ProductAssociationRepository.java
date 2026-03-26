@@ -8,12 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductAssociationRepository extends MongoRepository<ProductAssociation, String> {
-    Optional<ProductAssociation> findByProductIdAndAssociatedTargetIdAndAssociationType(
-            Long productId,
-            Long associatedTargetId,
-            RecommendationAssociationType associationType
-    );
-
     List<ProductAssociation> findTop20ByProductIdAndAssociationTypeOrderByCorrelationScoreDescLastUpdatedDesc(
             Long productId,
             RecommendationAssociationType associationType

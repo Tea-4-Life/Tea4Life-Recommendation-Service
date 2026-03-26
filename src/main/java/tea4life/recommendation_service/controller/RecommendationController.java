@@ -23,8 +23,8 @@ import java.util.List;
 public class RecommendationController {
 
     RecommendationQueryService recommendationQueryService;
-    
-    @GetMapping("/popular")
+
+    @GetMapping("/products/popularity/top")
     public ApiResponse<List<PopularProductResponse>> getPopularProducts(
             @RequestParam(name = "limit", defaultValue = "10") int limit
     ) {
@@ -32,30 +32,16 @@ public class RecommendationController {
     }
 
     @GetMapping("/products/{productId}/popularity")
-    public ApiResponse<PopularProductResponse> getProductPopularity(
+    public ApiResponse<PopularProductResponse> getProductPopularityById(
             @PathVariable("productId") Long productId
     ) {
-        return new ApiResponse<>(recommendationQueryService.getProductPopularity(productId));
+        return new ApiResponse<>(recommendationQueryService.getProductPopularityById(productId));
     }
 
-    @GetMapping("/popularity")
+    @GetMapping("/products/popularity")
     public ApiResponse<List<PopularProductResponse>> getProductPopularises(
             @RequestParam("productIds") List<Long> productIds
     ) {
         return new ApiResponse<>(recommendationQueryService.getProductPopularities(productIds));
-    }
-
-    @GetMapping("/products/{productId}/related")
-    public ApiResponse<List<RelatedProductResponse>> getRelatedProducts(
-            @PathVariable("productId") Long productId
-    ) {
-        return new ApiResponse<>(recommendationQueryService.getRelatedProducts(productId));
-    }
-
-    @GetMapping("/products/{productId}/option-values")
-    public ApiResponse<List<RecommendedOptionValueResponse>> getRecommendedOptionValues(
-            @PathVariable("productId") Long productId
-    ) {
-        return new ApiResponse<>(recommendationQueryService.getRecommendedOptionValues(productId));
     }
 }

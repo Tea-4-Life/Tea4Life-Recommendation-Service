@@ -9,7 +9,7 @@ import java.util.List;
 public interface RecommendationQueryService {
     List<PopularProductResponse> getPopularProducts(int limit);
 
-    PopularProductResponse getProductPopularity(Long productId);
+    PopularProductResponse getProductPopularityById(Long productId);
 
     List<PopularProductResponse> getProductPopularities(List<Long> productIds);
 

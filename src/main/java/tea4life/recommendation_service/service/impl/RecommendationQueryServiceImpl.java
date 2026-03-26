@@ -43,7 +43,7 @@ public class RecommendationQueryServiceImpl implements RecommendationQueryServic
     }
 
     @Override
-    public PopularProductResponse getProductPopularity(Long productId) {
+    public PopularProductResponse getProductPopularityById(Long productId) {
         return productPopularityRepository.findByProductId(productId)
                 .map(this::toPopularResponse)
                 .orElseGet(() -> new PopularProductResponse(

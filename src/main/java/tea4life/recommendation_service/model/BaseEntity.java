@@ -1,4 +1,4 @@
-package tea4life.recommendation_service.model.base;
+package tea4life.recommendation_service.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

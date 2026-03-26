@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import tea4life.recommendation_service.model.base.BaseEntity;
 import tea4life.recommendation_service.model.constant.RecommendationAssociationType;
 
 import java.time.Instant;
